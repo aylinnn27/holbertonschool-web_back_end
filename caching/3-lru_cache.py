@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+''' smth '''
 from base_caching import BaseCaching
 '''Module'''
 class LRUCache(BaseCaching):

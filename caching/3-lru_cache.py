@@ -14,14 +14,14 @@ class LRUCache(BaseCaching):
             return
 
         if key in self.cache_data:
-            del self.cache_data[key]  # Remove it first to update its position
+            del self.cache_data[key] 
 
         elif len(self.cache_data) >= BaseCaching.MAX_ITEMS:
             oldest_key = next(iter(self.cache_data))
             del self.cache_data[oldest_key]
             print("DISCARD: {}".format(oldest_key))
 
-        self.cache_data[key] = item  # Insert at the end (most recently used)
+        self.cache_data[key] = item 
 
     def get(self, key):
         """Retrieve an item from the cache"""
@@ -29,6 +29,6 @@ class LRUCache(BaseCaching):
             return None
 
         item = self.cache_data[key]
-        del self.cache_data[key]  # Remove and re-insert to mark as recently used
+        del self.cache_data[key] 
         self.cache_data[key] = item
         return item

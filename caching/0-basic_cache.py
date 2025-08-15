@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-"""Basic caching module that stores items with no limit."""
 
 from base_caching import BaseCaching
 

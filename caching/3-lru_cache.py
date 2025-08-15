@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 from base_caching import BaseCaching
-
+'''Module'''
 class LRUCache(BaseCaching):
     """LRUCache: Least Recently Used cache system"""
 

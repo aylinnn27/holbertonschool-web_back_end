@@ -1,7 +1,6 @@
 #!/usr/bin/python3
-''' smth '''
 from base_caching import BaseCaching
-'''LRU Module'''
+
 class LRUCache(BaseCaching):
     """LRUCache: Least Recently Used cache system"""
 

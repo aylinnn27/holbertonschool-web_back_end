@@ -78,7 +78,7 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         host=host,
         database=db_name
     )
-        
+
 
 def main() -> None:
     """Retrieve all users and log them with filtered PII fields."""

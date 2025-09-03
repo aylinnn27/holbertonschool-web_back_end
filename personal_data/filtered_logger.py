@@ -73,9 +73,7 @@ def get_logger() -> logging.Logger:
 
     return logger
 
-'''
-Smth 
-'''
+
 def get_db() -> MySQLConnection:
     """
     Connect to the MySQL database using environment variables.

@@ -19,15 +19,6 @@ def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
     """
     Obfuscates the values of specified fields in a log message.
-
-    Args:
-        fields (List[str]): List of field names to redact.
-        redaction (str): String to replace sensitive values with.
-        message (str): The log message containing data.
-        separator (str): Separator used between fields in the log message.
-
-    Returns:
-        str: The log message with sensitive fields redacted.
     """
     pattern = f"({'|'.join(fields)})=.*?{re.escape(separator)}"
     return re.sub(
@@ -51,9 +42,6 @@ class RedactingFormatter(logging.Formatter):
     def __init__(self, fields: List[str]):
         """
         Initialize the RedactingFormatter.
-
-        Args:
-            fields (List[str]): List of field names to redact.
         """
         super().__init__(self.FORMAT)
         self.fields = fields
@@ -61,12 +49,6 @@ class RedactingFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         """
         Format a log record, redacting sensitive fields.
-
-        Args:
-            record (logging.LogRecord): Log record to format.
-
-        Returns:
-            str: Formatted log message with sensitive fields redacted.
         """
         message = super().format(record)
         return filter_datum(self.fields, self.REDACTION, message,
@@ -79,9 +61,6 @@ PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 def get_logger() -> logging.Logger:
     """
     Create and configure a logger for user data.
-
-    Returns:
-        logging.Logger: Configured logger object.
     """
     logger = logging.getLogger("user_data")
     logger.setLevel(logging.INFO)
@@ -98,15 +77,6 @@ def get_logger() -> logging.Logger:
 def get_db() -> MySQLConnection:
     """
     Connect to the MySQL database using environment variables.
-
-    Environment variables:
-        PERSONAL_DATA_DB_USERNAME
-        PERSONAL_DATA_DB_PASSWORD
-        PERSONAL_DATA_DB_HOST
-        PERSONAL_DATA_DB_NAME
-
-    Returns:
-        MySQLConnection: Connection object to the MySQL database.
     """
     user = os.environ.get("PERSONAL_DATA_DB_USERNAME", "root")
     password = os.environ.get("PERSONAL_DATA_DB_PASSWORD", "")

@@ -16,9 +16,7 @@ PII_FIELDS: Tuple[str, ...] = ("name", "email", "phone", "ssn", "password")
 
 def filter_datum(fields: List[str], redaction: str, message: str,
                  separator: str) -> str:
-    """
-    Returns the log message obfuscated.
-    """
+    """Returns the log message obfuscated."""
     pattern = f'({"|".join(fields)})=.*?{re.escape(separator)}'
     return re.sub(pattern, lambda m: f'{m.group(1)}={redaction}{separator}',
                   message)
@@ -28,7 +26,8 @@ class RedactingFormatter(logging.Formatter):
     """Redacting Formatter class"""
 
     REDACTION = "***"
-    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    FORMAT = ("[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: "
+              "%(message)s")
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]):
@@ -42,7 +41,7 @@ class RedactingFormatter(logging.Formatter):
 
 
 def get_logger() -> logging.Logger:
-    """Returns a configured logger"""
+    """Returns a configured logger."""
     logger = logging.getLogger("user_data")
     logger.setLevel(logging.INFO)
     logger.propagate = False
@@ -67,4 +66,3 @@ def get_db() -> MySQLConnection:
         host=host,
         database=db_name
     )
-

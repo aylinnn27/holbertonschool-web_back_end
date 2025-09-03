@@ -77,6 +77,16 @@ def get_logger() -> logging.Logger:
 def get_db() -> MySQLConnection:
     """
     Connect to the MySQL database using environment variables.
+
+    Environment variables:
+        PERSONAL_DATA_DB_USERNAME: Database username
+        PERSONAL_DATA_DB_PASSWORD: Database password
+        PERSONAL_DATA_DB_HOST: Database host
+        PERSONAL_DATA_DB_NAME: Database name
+
+    Returns:
+        mysql.connector.MySQLConnection: Connection object to the MySQL database.
+        The caller should call `close()` on the connection when finished.
     """
     user = os.environ.get("PERSONAL_DATA_DB_USERNAME", "root")
     password = os.environ.get("PERSONAL_DATA_DB_PASSWORD", "")

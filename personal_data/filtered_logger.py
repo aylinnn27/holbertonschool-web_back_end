@@ -1,18 +1,33 @@
 #!/usr/bin/env python3
 """
 filtered_logger.py
+
 A module for filtering and formatting log messages containing
-sensitive data.
+sensitive data (PII).
 """
-import re
+
 import logging
+import os
+import re
 from typing import List
+
+import mysql.connector
+from mysql.connector import MySQLConnection
 
 
 def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
     """
     Obfuscates the values of specified fields in a log message.
+
+    Args:
+        fields (List[str]): List of field names to redact.
+        redaction (str): String to replace sensitive values with.
+        message (str): The log message containing data.
+        separator (str): Separator used between fields in the log message.
+
+    Returns:
+        str: The log message with sensitive fields redacted.
     """
     pattern = f"({'|'.join(fields)})=.*?{re.escape(separator)}"
     return re.sub(
@@ -24,21 +39,34 @@ def filter_datum(fields: List[str], redaction: str,
 
 class RedactingFormatter(logging.Formatter):
     """
-    Redacting Formatter class
+    Formatter class for logging messages with sensitive information redacted.
     """
 
     REDACTION = "***"
-    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: " \
-             "%(message)s"
+    FORMAT = (
+        "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    )
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]):
+        """
+        Initialize the RedactingFormatter.
+
+        Args:
+            fields (List[str]): List of field names to redact.
+        """
         super().__init__(self.FORMAT)
         self.fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
         """
-        Formats a log record and redacts sensitive information.
+        Format a log record, redacting sensitive fields.
+
+        Args:
+            record (logging.LogRecord): Log record to format.
+
+        Returns:
+            str: Formatted log message with sensitive fields redacted.
         """
         message = super().format(record)
         return filter_datum(self.fields, self.REDACTION, message,
@@ -50,7 +78,10 @@ PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
 def get_logger() -> logging.Logger:
     """
-    Creates and configures a logger for user data.
+    Create and configure a logger for user data.
+
+    Returns:
+        logging.Logger: Configured logger object.
     """
     logger = logging.getLogger("user_data")
     logger.setLevel(logging.INFO)
@@ -64,11 +95,19 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-import os
-import mysql.connector
-from mysql.connector import MySQLConnection
-
 def get_db() -> MySQLConnection:
+    """
+    Connect to the MySQL database using environment variables.
+
+    Environment variables:
+        PERSONAL_DATA_DB_USERNAME
+        PERSONAL_DATA_DB_PASSWORD
+        PERSONAL_DATA_DB_HOST
+        PERSONAL_DATA_DB_NAME
+
+    Returns:
+        MySQLConnection: Connection object to the MySQL database.
+    """
     user = os.environ.get("PERSONAL_DATA_DB_USERNAME", "root")
     password = os.environ.get("PERSONAL_DATA_DB_PASSWORD", "")
     host = os.environ.get("PERSONAL_DATA_DB_HOST", "localhost")

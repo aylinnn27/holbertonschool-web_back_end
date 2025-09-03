@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
 filtered_logger.py
-A module for filtering and formatting log messages containing sensitive data.
+A module for filtering and formatting log messages containing
+sensitive data.
 """
 import re
 import logging
 from typing import List
 
 
-def filter_datum(
-        fields: List[str], redaction: str,
-        message: str, separator: str) -> str:
+def filter_datum(fields: List[str], redaction: str,
+                 message: str, separator: str) -> str:
     """
     Obfuscates the values of specified fields in a log message.
     """
@@ -28,11 +28,12 @@ class RedactingFormatter(logging.Formatter):
     """
 
     REDACTION = "***"
-    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: " \
+             "%(message)s"
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]):
-        super(RedactingFormatter, self).__init__(self.FORMAT)
+        super().__init__(self.FORMAT)
         self.fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
@@ -40,7 +41,8 @@ class RedactingFormatter(logging.Formatter):
         Formats a log record and redacts sensitive information.
         """
         message = super().format(record)
-        return filter_datum(self.fields, self.REDACTION, message, self.SEPARATOR)
+        return filter_datum(self.fields, self.REDACTION, message,
+                            self.SEPARATOR)
 
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")

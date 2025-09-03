@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Module for filtering sensitive data from log messages
+filtered_logger.py
+A module for filtering and formatting log messages containing sensitive data.
 """
 import re
 import logging
@@ -22,7 +23,8 @@ def filter_datum(
 
 
 class RedactingFormatter(logging.Formatter):
-    """Redacting Formatter class
+    """
+    Redacting Formatter class
     """
 
     REDACTION = "***"
@@ -39,3 +41,22 @@ class RedactingFormatter(logging.Formatter):
         """
         message = super().format(record)
         return filter_datum(self.fields, self.REDACTION, message, self.SEPARATOR)
+
+
+PII_FIELDS = ("name", "email", "phone", "ssn", "password")
+
+
+def get_logger() -> logging.Logger:
+    """
+    Creates and configures a logger for user data.
+    """
+    logger = logging.getLogger("user_data")
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+
+    stream_handler = logging.StreamHandler()
+    formatter = RedactingFormatter(fields=PII_FIELDS)
+    stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
+
+    return logger

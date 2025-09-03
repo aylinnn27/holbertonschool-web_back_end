@@ -78,3 +78,22 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         host=host,
         database=db_name
     )
+        
+
+def main() -> None:
+    """Retrieve all users and log them with filtered PII fields."""
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM users;")
+    logger = get_logger()
+
+    for row in cursor:
+        log_msg = "; ".join(f"{k}={v}" for k, v in row.items()) + ";"
+        logger.info(log_msg)
+
+    cursor.close()
+    db.close()
+
+
+if __name__ == "__main__":
+    main()

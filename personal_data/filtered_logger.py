@@ -53,7 +53,9 @@ def get_logger() -> logging.Logger:
 
 
 def get_db() -> MySQLConnection:
-    """Returns a connector to the holberton database"""
+    """Returns a connector to the holberton database.
+    The caller should call `close()` on the connection.
+    """
     username = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
     password = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
     host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
@@ -65,3 +67,4 @@ def get_db() -> MySQLConnection:
         host=host,
         database=db_name
     )
+

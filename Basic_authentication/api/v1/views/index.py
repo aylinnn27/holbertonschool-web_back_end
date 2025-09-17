@@ -16,24 +16,21 @@ def status() -> str:
     return jsonify({"status": "OK"})
 
 
-@app_views.route('/stats/', strict_slashes=False)
-def stats() -> str:
-    """
-    GET /api/v1/stats
-    Return:
-      - the number of each objects
-    """
-    from models.user import User
-    stats = {}
-    stats['users'] = User.count()
-    return jsonify(stats)
-
-
 @app_views.route('/unauthorized', methods=['GET'], strict_slashes=False)
-def unauthorized() -> None:
+def unauthorized() -> str:
     """
     GET /api/v1/unauthorized
-    Raise:
-      - a 401 Unauthorized error
+    Return:
+      - raises a 401 error
     """
     abort(401)
+
+
+@app_views.route('/forbidden', methods=['GET'], strict_slashes=False)
+def forbidden() -> str:
+    """
+    GET /api/v1/forbidden
+    Return:
+      - raises a 403 error
+    """
+    abort(403)

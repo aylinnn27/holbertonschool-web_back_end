@@ -97,12 +97,9 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Set up class-wide mocks before tests"""
-        # Patch requests.get
         cls.get_patcher = patch("requests.get")
-
         mock_get = cls.get_patcher.start()
 
-        # Configure side_effect for .json()
         def mock_json(url):
             if url.endswith("/orgs/google"):
                 return cls.org_payload

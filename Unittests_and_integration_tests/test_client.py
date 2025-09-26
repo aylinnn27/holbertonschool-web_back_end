@@ -6,7 +6,8 @@ import unittest
 from unittest.mock import patch, PropertyMock
 from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
-from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
+from fixtures import (org_payload, repos_payload, expected_repos,
+                      apache2_repos, TEST_PAYLOAD)
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -30,7 +31,9 @@ class TestGithubOrgClient(unittest.TestCase):
 
     def test_public_repos_url(self):
         """Test that _public_repos_url returns the expected URL"""
-        test_payload = {"repos_url": "https://api.github.com/orgs/google/repos"}
+        test_payload = {
+            "repos_url": "https://api.github.com/orgs/google/repos"
+        }
 
         with patch.object(
             GithubOrgClient,
@@ -60,7 +63,9 @@ class TestGithubOrgClient(unittest.TestCase):
             "_public_repos_url",
             new_callable=PropertyMock
         ) as mock_repos_url:
-            mock_repos_url.return_value = "https://api.github.com/orgs/google/repos"
+            mock_repos_url.return_value = (
+                "https://api.github.com/orgs/google/repos"
+            )
 
             client_obj = GithubOrgClient("google")
             result = client_obj.public_repos()
@@ -89,6 +94,7 @@ class TestGithubOrgClient(unittest.TestCase):
         "repos_payload": repos_payload,
         "expected_repos": expected_repos,
         "apache2_repos": apache2_repos,
+        "TEST_PAYLOAD": TEST_PAYLOAD,
     }
 ])
 class TestIntegrationGithubOrgClient(unittest.TestCase):

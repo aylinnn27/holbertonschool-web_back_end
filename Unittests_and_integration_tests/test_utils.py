@@ -1,26 +1,22 @@
-#!/usr/bin/env python3
-"""
-Unit tests for utils.access_nested_map
-"""
-
 import unittest
-from parameterized import parameterized
-from utils import access_nested_map
+from unittest.mock import patch, Mock
+from utils import get_json
 
+class TestGetJson(unittest.TestCase):
+    @patch("utils.requests.get")
+    def test_get_json(self, mock_get):
+        # First test case
+        test_url = "http://example.com"
+        test_payload = {"payload": True}
 
-class TestAccessNestedMap(unittest.TestCase):
-    """Test class for access_nested_map function"""
+        # Mock setup: requests.get(url).json() should return test_payload
+        mock_response = Mock()
+        mock_response.json.return_value = test_payload
+        mock_get.return_value = mock_response
 
-    @parameterized.expand([
-        ({}, ("a",), "a"),
-        ({"a": 1}, ("a", "b"), "b"),
-    ])
-    def test_access_nested_map_exception(self, nested_map, path, missing_key):
-        """Test that access_nested_map raises KeyError with the correct message"""
-        with self.assertRaises(KeyError) as context:
-            access_nested_map(nested_map, path)
-        self.assertEqual(str(context.exception), f"'{missing_key}'")
+        # Call the function being tested
+        result = get_json(test_url)
 
-
-if __name__ == "__main__":
-    unittest.main()
+        # Assertions
+        mock_get.assert_called_once_with(test_url)   # ensure requests.get called with url
+        self.assertEqual(result, test_payload)       # ensure return value matches mock payload

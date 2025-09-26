@@ -19,7 +19,6 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_org(self, org_name, mock_get_json):
         """Test that GithubOrgClient.org returns the correct value"""
         test_payload = {"login": org_name}
-        # Configure the mock to return the test payload
         mock_get_json.return_value = test_payload
 
         client_obj = GithubOrgClient(org_name)
@@ -30,7 +29,6 @@ class TestGithubOrgClient(unittest.TestCase):
 
     def test_public_repos_url(self):
         """Test that _public_repos_url returns the expected URL"""
-        # Fake payload that GithubOrgClient.org would normally return
         test_payload = {"repos_url": "https://api.github.com/orgs/google/repos"}
 
         with patch.object(
@@ -43,9 +41,39 @@ class TestGithubOrgClient(unittest.TestCase):
             client_obj = GithubOrgClient("google")
             result = client_obj._public_repos_url
 
-            # Ensure _public_repos_url matches repos_url from the mocked payload
             self.assertEqual(result, test_payload["repos_url"])
             mock_org.assert_called_once()
 
+    @patch("client.get_json")
+    def test_public_repos(self, mock_get_json):
+        """Test that public_repos returns the expected list of repos"""
+        # Fake repo payload returned by get_json
+        test_payload = [
+            {"name": "repo1"},
+            {"name": "repo2"},
+            {"name": "repo3"}
+        ]
+        mock_get_json.return_value = test_payload
 
-if __name__ == "__ma
+        # Patch _public_repos_url to return a dummy URL
+        with patch.object(
+            GithubOrgClient,
+            "_public_repos_url",
+            new_callable=PropertyMock
+        ) as mock_repos_url:
+            mock_repos_url.return_value = "https://api.github.com/orgs/google/repos"
+
+            client_obj = GithubOrgClient("google")
+            result = client_obj.public_repos()
+
+            # Expect list of repo names only
+            expected = ["repo1", "repo2", "repo3"]
+            self.assertEqual(result, expected)
+
+            # Ensure both mocks were called once
+            mock_repos_url.assert_called_once()
+            mock_get_json.assert_called_once()
+
+
+if __name__ == "__main__":
+    unittest.main()

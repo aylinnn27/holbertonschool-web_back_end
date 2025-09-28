@@ -2,7 +2,8 @@
 """Flask app demonstrating mock user login with Flask-Babel"""
 
 from flask import Flask, render_template, request, g
-from flask_babel import Babel, _
+from flask_babel import Babel, _  # noqa: F401
+from typing import Optional
 
 app = Flask(__name__)
 
@@ -23,26 +24,29 @@ users = {
     4: {"name": "Teletubby", "locale": None, "timezone": "Europe/London"},
 }
 
-def get_user() -> dict | None:
+def get_user() -> Optional[dict]:
     """Return user dict from users table based on login_as URL parameter"""
-    try:
-        user_id = int(request.args.get("login_as", 0))
-        return users.get(user_id)
-    except (ValueError, TypeError):
-        return None
+    login_as = request.args.get("login_as")
+    if login_as:
+        try:
+            user_id = int(login_as)
+            return users.get(user_id)
+        except ValueError:
+            return None
+    return None
 
 @app.before_request
-def before_request() -> None:
+def before_request():
     """Set the current user in flask.g.user before each request"""
     g.user = get_user()
 
 @babel.locale_selector
-def get_locale() -> str:
+def get_locale():
     """Select locale: URL parameter > user preference > request header > default"""
     locale = request.args.get("locale")
     if locale in app.config['LANGUAGES']:
         return locale
-    if g.get("user") and g.user.get("locale") in app.config['LANGUAGES']:
+    if getattr(g, "user", None) and g.user.get("locale") in app.config['LANGUAGES']:
         return g.user.get("locale")
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
@@ -50,6 +54,3 @@ def get_locale() -> str:
 def index():
     """Render home page with optional user welcome"""
     return render_template("5-index.html")
-
-if __name__ == "__main__":
-    app.run(debug=True)
